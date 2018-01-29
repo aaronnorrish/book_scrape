@@ -3,7 +3,10 @@ import requests
 import datetime
 import os.path
 
-filename = "" # path of file to be read from and written to
+filename = input("Enter path of csv file: ")
+while filename[-4:] != ".csv":
+    filename = input("Please enter a path to a csv file: ")
+    
 today = datetime.date.today().strftime('%-d/%-m/%y')
 
 #check if file exists
@@ -44,7 +47,9 @@ for book in csv_books:
     if book[3] == "-":
         unavailble_books.append(book)
 
-url = "" #bookdepository url to be scraped
+url = input("Enter bookdepository url: ")
+while url.find("www.bookdepository.com") == -1:
+    filename = input("Please enter a bookdepository url: ")
 lastPage = False
 while not lastPage:
     source = requests.get(url)
