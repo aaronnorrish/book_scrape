@@ -1,5 +1,0 @@
-#shellscript used by automator workflow to run book_scrape.py
-
-#!/bin/sh
-cd      # enter path of book_scrape.py here
-python book_scrape.py
