@@ -47,9 +47,11 @@ for book in csv_books:
     if book[3] == "-":
         unavailble_books.append(book)
 
-url = input("Enter bookdepository url: ")
-while url.find("www.bookdepository.com") == -1:
-    filename = input("Please enter a bookdepository url: ")
+search_term = input("Enter search term: ")
+search_term = search_term.split(" ")
+search_term = "+".join(search_term)
+
+url = "https://www.bookdepository.com/search?searchTerm=" + search_term
 lastPage = False
 while not lastPage:
     source = requests.get(url)
