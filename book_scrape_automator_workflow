@@ -1,8 +1,0 @@
-#automator workflow - can be set up as calendar alarm to run every day
-
-on run {input, parameters}
-	tell application "Terminal"
-		activate
-		do script with command    #path to shellscript goes here
-	end tell
-end run
