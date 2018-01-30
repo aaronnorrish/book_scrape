@@ -6,7 +6,6 @@ import os.path
 filename = input("Enter path of csv file: ")
 while filename[-4:] != ".csv":
     filename = input("Please enter a path to a csv file: ")
-    
 today = datetime.date.today().strftime('%-d/%-m/%y')
 
 #check if file exists
@@ -50,8 +49,31 @@ for book in csv_books:
 search_term = input("Enter search term: ")
 search_term = search_term.split(" ")
 search_term = "+".join(search_term)
-
 url = "https://www.bookdepository.com/search?searchTerm=" + search_term
+
+exclude_terms = input("Would you like to exclude any search terms? (y/n): ")
+while exclude_terms != "y" and exclude_terms != "n":
+    exclude_terms = input('Please enter "y" or "n": ')
+if exclude_terms == "y":
+    terms_to_exclude = []
+    terms_to_exclude.append(input("Enter term to be excluded: "))
+    while True:
+        extra_term = input("Enter another term to be excluded (Enter space to exit): ")
+        if extra_term == " ":
+            break
+        else:
+            terms_to_exclude.append(extra_term)
+    terms_to_exclude_length = len(terms_to_exclude)
+
+
+implement_cutoff = input("Would you like to terminate the search after a certain number of pages? (y/n): ")
+while implement_cutoff != "y" and implement_cutoff != "n":
+    implement_cutoff = input('Please enter "y" or "n": ')
+if implement_cutoff == "y":
+    cutoff = int(input("Enter page limit: "))
+    while cutoff <= 0:
+        cutoff = int(input("Please enter a page limit greater than zero: "))
+
 lastPage = False
 while not lastPage:
     source = requests.get(url)
@@ -68,6 +90,15 @@ while not lastPage:
 
         # get title
         title = book.a.string.strip().replace(",", "")
+        # skip book if it contains any excluded search terms
+        if exclude_terms == "y":
+            exclude_book = False
+            for pos in range(terms_to_exclude_length):
+                if title.lower().find(terms_to_exclude[pos].lower()) != -1:
+                    exclude_book = True
+                    break
+            if exclude_book:
+                continue
 
         # get publication date
         try:
@@ -122,13 +153,16 @@ while not lastPage:
             except AttributeError:
               author = "Not Provided"
             new_book = [title, author, pub_date, retail_price]
-            for i in range(4, rows - 1):
+            for x in range(4, rows - 1):
                 new_book.append("-")
             new_book.append(price)
             csv_books.append(new_book)
 
     try:
       next_url = soup.find("li", {"class":"next"}).a.get("href")
+      if implement_cutoff == "y":
+          if int(next_url[-1]) == cutoff + 1:
+              break
       url = "https://www.bookdepository.com" + next_url
     except AttributeError:
       lastPage = True
