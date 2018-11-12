@@ -14,7 +14,7 @@ if os.path.isfile(filename):
     file_read = open(filename, "r+")
     headers = file_read.readline().replace("\n","").replace("\r","").split(",")
     if headers[-1] == today:
-        print "Already obtained today's data"
+        print("Already obtained today's data")
         exit()
     existing_file = True
 else:
@@ -149,7 +149,7 @@ while not lastPage:
         if not existing_book and available:
             title = '"' + title + '"'
             try:
-              author = book.p.a.string
+              author = book.find("p", {"class":"author"}).span.a.span.text
             except AttributeError:
               author = "Not Provided"
             new_book = [title, author, pub_date, retail_price]
